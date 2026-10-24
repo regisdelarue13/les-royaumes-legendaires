@@ -17,42 +17,95 @@ function openFaction(id){const f=factions.find(x=>x.id===id);if(!f)return;const 
 function openCharacter(id,index){
  const f=factions.find(x=>x.id===id),c=f.chars[index];
  const description=c[3];
+ const slug=s=>s.normalize('NFD')
+  .replace(/[\u0300-\u036f]/g,'')
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g,'-')
+  .replace(/^-|-$/g,'');
+ const name=slug(c[0]);
+ const voiceUrl=`media/${name}-voix.mp3`;
+ const descriptionUrl=`media/${name}-description.mp3`;
+
  characterView.style.setProperty('--accent',f.accent);
- characterView.innerHTML=`<button class="back-link" id="backRoster">← Retour aux personnages</button>
+ characterView.innerHTML=`
+ <button class="back-link" id="backRoster">← Retour aux personnages</button>
  <div class="profile" style="--accent:${f.accent}">
- <div class="profile-visuals">
- <div class="portrait-frame">
- <div class="portrait-art">
- <span>${c[2]}</span>
- <div class="portrait-name">${c[0]}</div>
- <button class="play-button portrait-voice" id="demoVoice">▶ Voix du personnage</button>
- </div>
- <div class="portrait-caption">PORTRAIT OFFICIEL</div>
- </div>
- <div class="idle-frame">
- <div class="idle-stage"><div class="idle-glow"></div><span class="idle-glyph">${c[2]}</span><div class="idle-label">ANIMATION EN BOUCLE</div></div>
- <p class="media-hint">Ta courte vidéo MP4 sera affichée ici automatiquement, en boucle et sans son.</p>
- </div>
- </div>
- <div class="profile-copy">
- <p class="role profile-role">${f.name} · ${c[1]}</p>
- <div class="lore-panel">
- <h2>Description</h2>
- <p>${description}</p>
- <button class="play-button" id="readDescription">▶ Écouter la description</button>
- </div>
- </div>
+  <div class="profile-visuals">
+   <div class="portrait-frame">
+    <div class="portrait-art">
+     <span>${c[2]}</span>
+     <div class="portrait-name">${c[0]}</div>
+     <button class="play-button portrait-voice" id="demoVoice" hidden>▶ Écouter sa voix</button>
+    </div>
+    <div class="portrait-caption">PORTRAIT OFFICIEL</div>
+   </div>
+   <div class="idle-frame">
+    <div class="idle-stage">
+     <div class="idle-glow"></div>
+     <span class="idle-glyph">${c[2]}</span>
+     <div class="idle-label">ANIMATION EN BOUCLE</div>
+    </div>
+    <p class="media-hint">Ta courte vidéo MP4 sera affichée ici automatiquement, en boucle et sans son.</p>
+   </div>
+  </div>
+  <div class="profile-copy">
+   <p class="role profile-role">${f.name} · ${c[1]}</p>
+   <div class="lore-panel">
+    <h2>Description</h2>
+    <p>${description}</p>
+    <button class="play-button" id="readDescription">▶ Écouter la description</button>
+   </div>
+  </div>
  </div>`;
+
  show(characterView);
  $('#backRoster').addEventListener('click',()=>openFaction(id));
- function speak(text){
-  const utterance=new SpeechSynthesisUtterance(text);
-  utterance.lang='fr-FR';
-  speechSynthesis.cancel();
-  speechSynthesis.speak(utterance);
+
+ const voiceButton=$('#demoVoice');
+ const descriptionButton=$('#readDescription');
+
+ function fileExists(url){
+  return fetch(url,{method:'HEAD',cache:'no-store'})
+   .then(response=>response.ok)
+   .catch(()=>false);
  }
- $('#demoVoice').addEventListener('click',()=>speak(`${c[0]}. ${description}`));
- $('#readDescription').addEventListener('click',()=>speak(description));
+
+ const voiceAudio=new Audio(voiceUrl);
+ const descriptionAudio=new Audio(descriptionUrl);
+
+ fileExists(voiceUrl).then(exists=>{
+  if(exists) voiceButton.hidden=false;
+ });
+
+ voiceButton.addEventListener('click',()=>{
+  voiceAudio.currentTime=0;
+  voiceAudio.play().catch(()=>{
+   voiceButton.textContent='Audio indisponible';
+  });
+ });
+
+ fileExists(descriptionUrl).then(exists=>{
+  if(exists){
+   descriptionButton.textContent='▶ Écouter la description';
+   descriptionButton.onclick=()=>{
+    speechSynthesis.cancel();
+    descriptionAudio.currentTime=0;
+    descriptionAudio.play().catch(()=>{
+     descriptionButton.textContent='Audio indisponible';
+    });
+   };
+  }else{
+   descriptionButton.textContent='▶ Lire la description (voix de secours)';
+   descriptionButton.onclick=()=>{
+    descriptionAudio.pause();
+    speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance(description);
+    utterance.lang='fr-FR';
+    speechSynthesis.speak(utterance);
+   };
+  }
+ });
 }
+
 
 $('#factionList').addEventListener('click',e=>{const b=e.target.closest('[data-faction]');if(b)openFaction(b.dataset.faction)});$('#backBtn').addEventListener('click',()=>show(homeView));$('#homeBtn').addEventListener('click',()=>show(homeView));$('#topHome').addEventListener('click',()=>show(homeView));renderHome();
