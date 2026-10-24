@@ -16,37 +16,32 @@ function openFaction(id){const f=factions.find(x=>x.id===id);if(!f)return;const 
 
 function openCharacter(id,index){
  const f=factions.find(x=>x.id===id),c=f.chars[index];
- const description=`${c[3]} Cette fiche pourra accueillir son histoire complète, ses pouvoirs et ses relations avec les autres personnages.`;
+ const description=c[3];
  characterView.style.setProperty('--accent',f.accent);
- characterView.innerHTML=`
- <button class="back-link" id="backRoster">← Retour aux personnages</button>
+ characterView.innerHTML=`<button class="back-link" id="backRoster">← Retour aux personnages</button>
  <div class="profile" style="--accent:${f.accent}">
-  <div class="profile-visuals">
-   <div class="portrait-frame">
-    <div class="portrait-art">
-     <span>${c[2]}</span>
-     <div class="portrait-name">${c[0]}</div>
-     <button class="play-button portrait-voice" id="demoVoice">▶ Écouter le personnage</button>
-    </div>
-    <div class="portrait-caption">PORTRAIT OFFICIEL</div>
-   </div>
-   <div class="idle-frame">
-    <div class="idle-stage">
-     <div class="idle-glow"></div>
-     <span class="idle-glyph">${c[2]}</span>
-     <div class="idle-label">ANIMATION EN BOUCLE</div>
-    </div>
-    <p class="media-hint">Ta courte vidéo MP4 sera affichée ici automatiquement, en boucle et sans son.</p>
-   </div>
-  </div>
-  <div class="profile-copy">
-   <p class="role profile-role">${f.name} · ${c[1]}</p>
-   <div class="lore-panel">
-    <h2>Description</h2>
-    <p>${description}</p>
-    <button class="play-button" id="readDescription">▶ Écouter la description</button>
-   </div>
-  </div>
+ <div class="profile-visuals">
+ <div class="portrait-frame">
+ <div class="portrait-art">
+ <span>${c[2]}</span>
+ <div class="portrait-name">${c[0]}</div>
+ <button class="play-button portrait-voice" id="demoVoice">▶ Voix du personnage</button>
+ </div>
+ <div class="portrait-caption">PORTRAIT OFFICIEL</div>
+ </div>
+ <div class="idle-frame">
+ <div class="idle-stage"><div class="idle-glow"></div><span class="idle-glyph">${c[2]}</span><div class="idle-label">ANIMATION EN BOUCLE</div></div>
+ <p class="media-hint">Ta courte vidéo MP4 sera affichée ici automatiquement, en boucle et sans son.</p>
+ </div>
+ </div>
+ <div class="profile-copy">
+ <p class="role profile-role">${f.name} · ${c[1]}</p>
+ <div class="lore-panel">
+ <h2>Description</h2>
+ <p>${description}</p>
+ <button class="play-button" id="readDescription">▶ Écouter la description</button>
+ </div>
+ </div>
  </div>`;
  show(characterView);
  $('#backRoster').addEventListener('click',()=>openFaction(id));
@@ -56,7 +51,7 @@ function openCharacter(id,index){
   speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
  }
- $('#demoVoice').addEventListener('click',()=>speak(`${c[0]}. ${c[3]}`));
+ $('#demoVoice').addEventListener('click',()=>speak(`${c[0]}. ${description}`));
  $('#readDescription').addEventListener('click',()=>speak(description));
 }
 
