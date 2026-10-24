@@ -44,3 +44,43 @@
 .lore-panel .play-button {
   margin-top: 8px;
 }
+
+/* Correction des fiches de personnages */
+.profile-copy .profile-role {
+  font-size: 18px !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.portrait-art {
+  position: relative;
+  padding-bottom: 58px;
+}
+
+.portrait-voice {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  width: calc(100% - 16px);
+  padding: 9px 5px;
+  font-size: 12px;
+}
+
+.lore-panel {
+  margin-top: 12px;
+  padding: 18px;
+  border: 1px solid #3a4d68;
+  border-radius: 10px;
+  background: #1a2940;
+}
+
+.lore-panel h2 {
+  margin-top: 0;
+  font-size: 25px;
+}
+
+.lore-panel p {
+  white-space: pre-line;
+}
