@@ -13,5 +13,51 @@ function show(view){[homeView,factionView,characterView].forEach(v=>v.classList.
 function factionArt(f,extra=''){return `<div class="banner-art ${extra}" style="--accent:${f.accent};--tint:${f.tint}"><span class="banner-symbol">${f.symbol}</span></div>`}
 function renderHome(){ $('#factionList').innerHTML=factions.map((f,i)=>`<button class="faction-banner" data-faction="${f.id}" style="--accent:${f.accent};--tint:${f.tint}">${factionArt(f)}<div class="banner-copy"><div class="banner-kicker">FACTION ${String(i+1).padStart(2,'0')}</div><h3>${f.name}</h3><p>${f.short}</p><div class="banner-motto">${f.motto}</div></div><span class="banner-arrow">›</span></button>`).join('');}
 function openFaction(id){const f=factions.find(x=>x.id===id);if(!f)return;const hero=$('#factionHero');hero.style.setProperty('--accent',f.accent);hero.style.setProperty('--tint',f.tint);hero.innerHTML=`${factionArt(f)}<div><div class="motto">${f.motto}</div><h1>${f.name}</h1><p>${f.desc}</p></div>`;$('#rosterTitle').textContent=`Les personnages`;$('#characterGrid').innerHTML=f.chars.map((c,i)=>`<button class="character-card" data-character="${i}" style="--accent:${f.accent}"><div class="character-art"><span class="char-level">HÉROS ${String(i+1).padStart(2,'0')}</span><span class="character-glyph">${c[2]}</span><span class="character-name-overlay">${c[0]}</span></div><div class="character-info"><p class="role">${c[1]}</p><h3>${c[0]}</h3><p>${c[3]}</p><div class="card-open">VOIR LA FICHE <span>↗</span></div></div></button>`).join('');$('#characterGrid').querySelectorAll('[data-character]').forEach(btn=>btn.addEventListener('click',()=>openCharacter(f.id,+btn.dataset.character)));show(factionView);}
-function openCharacter(id,index){const f=factions.find(x=>x.id===id),c=f.chars[index];characterView.style.setProperty('--accent',f.accent);characterView.innerHTML=`<button class="back-link" id="backRoster">← Retour aux personnages</button><div class="profile" style="--accent:${f.accent}"><div class="profile-visuals"><div class="portrait-frame"><div class="portrait-art"><span>${c[2]}</span><div class="portrait-name">${c[0]}</div></div><div class="portrait-caption">PORTRAIT OFFICIEL</div></div><div class="idle-frame"><div class="idle-stage"><div class="idle-glow"></div><span class="idle-glyph">${c[2]}</span><div class="idle-label">ANIMATION EN BOUCLE</div></div><p class="media-hint">Ta courte vidéo MP4 sera affichée ici automatiquement, en boucle et sans son.</p></div></div><div class="profile-copy"><p class="role">${f.name} · ${c[1]}</p><p class="profile-description">${c[3]}</p><div class="lore-panel"><h2>Histoire du personnage</h2><p>${c[3]} Cette fiche pourra accueillir son histoire complète, ses pouvoirs et ses relations avec les autres personnages.</p></div><div class="narration-panel"><div><b>La voix du personnage</b><small>Une narration facultative générée avec ElevenLabs</small></div><button class="play-button" id="demoVoice">▶ Écouter un exemple</button><p class="media-hint">Plus tard, ce bouton pourra lire ton fichier audio. Pour l'instant, il utilise la voix de ton navigateur.</p></div></div></div>`;show(characterView);$('#backRoster').addEventListener('click',()=>openFaction(id));$('#demoVoice').addEventListener('click',()=>{const utterance=new SpeechSynthesisUtterance(`${c[0]}. ${c[3]}`);utterance.lang='fr-FR';speechSynthesis.cancel();speechSynthesis.speak(utterance);});}
+
+function openCharacter(id,index){
+ const f=factions.find(x=>x.id===id),c=f.chars[index];
+ const description=`${c[3]} Cette fiche pourra accueillir son histoire complète, ses pouvoirs et ses relations avec les autres personnages.`;
+ characterView.style.setProperty('--accent',f.accent);
+ characterView.innerHTML=`
+ <button class="back-link" id="backRoster">← Retour aux personnages</button>
+ <div class="profile" style="--accent:${f.accent}">
+  <div class="profile-visuals">
+   <div class="portrait-frame">
+    <div class="portrait-art">
+     <span>${c[2]}</span>
+     <div class="portrait-name">${c[0]}</div>
+     <button class="play-button portrait-voice" id="demoVoice">▶ Écouter le personnage</button>
+    </div>
+    <div class="portrait-caption">PORTRAIT OFFICIEL</div>
+   </div>
+   <div class="idle-frame">
+    <div class="idle-stage">
+     <div class="idle-glow"></div>
+     <span class="idle-glyph">${c[2]}</span>
+     <div class="idle-label">ANIMATION EN BOUCLE</div>
+    </div>
+    <p class="media-hint">Ta courte vidéo MP4 sera affichée ici automatiquement, en boucle et sans son.</p>
+   </div>
+  </div>
+  <div class="profile-copy">
+   <p class="role profile-role">${f.name} · ${c[1]}</p>
+   <div class="lore-panel">
+    <h2>Description</h2>
+    <p>${description}</p>
+    <button class="play-button" id="readDescription">▶ Écouter la description</button>
+   </div>
+  </div>
+ </div>`;
+ show(characterView);
+ $('#backRoster').addEventListener('click',()=>openFaction(id));
+ function speak(text){
+  const utterance=new SpeechSynthesisUtterance(text);
+  utterance.lang='fr-FR';
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utterance);
+ }
+ $('#demoVoice').addEventListener('click',()=>speak(`${c[0]}. ${c[3]}`));
+ $('#readDescription').addEventListener('click',()=>speak(description));
+}
+
 $('#factionList').addEventListener('click',e=>{const b=e.target.closest('[data-faction]');if(b)openFaction(b.dataset.faction)});$('#backBtn').addEventListener('click',()=>show(homeView));$('#homeBtn').addEventListener('click',()=>show(homeView));$('#topHome').addEventListener('click',()=>show(homeView));renderHome();
