@@ -24,6 +24,7 @@ function openCharacter(id,index){
   .replace(/[^a-z0-9]+/g,'-')
   .replace(/^-|-$/g,'');
  const name=slug(c[0]);
+ const animationUrl = c[0] === 'Draeven — Le Ninja Bleu' ? 'draeven-le-ninja-bleu.mp4' : null;
  const voiceUrl=`media/${name}-voix.mp3`;
  const descriptionUrl=`media/${name}-description.mp3`;
 
@@ -40,9 +41,28 @@ function openCharacter(id,index){
     </div>
     <div class="portrait-caption">PORTRAIT OFFICIEL</div>
    </div>
-   <div class="idle-frame">
-    <div class="idle-stage">
-     <div class="idle-glow"></div>
+${animationUrl ? `
+<div class="idle-frame">
+  <video
+    class="character-video"
+    src="./draeven-le-ninja-bleu.mp4"
+    autoplay
+    loop
+    muted
+    playsinline
+  ></video>
+  <p class="media-hint">Draeven — Le Ninja Bleu</p>
+</div>
+` : `
+<div class="idle-frame">
+  <div class="idle-stage">
+    <div class="idle-glow"></div>
+    <span class="idle-glyph">${c[2]}</span>
+    <div class="idle-label">ANIMATION EN BOUCLE</div>
+  </div>
+  <p class="media-hint">Ta courte vidéo MP4 sera affichée ici automatiquement, en boucle et sans son.</p>
+</div>
+`}
      <span class="idle-glyph">${c[2]}</span>
      <div class="idle-label">ANIMATION EN BOUCLE</div>
     </div>
