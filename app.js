@@ -1,3 +1,4 @@
+
 const factions = [
  
  {id:'bleus',name:'Chevaliers Bleus',short:'Les défenseurs du royaume',symbol:'♞',accent:'#4ba8ff',tint:'#18385b',motto:'COURAGE • HONNEUR • AMITIÉ',desc:'Les héros du royaume ! Courageux, loyaux et toujours prêts à aider… même si leur plan de bataille consiste parfois à foncer tout droit.',chars:[['Sir Galahad','Champion des Bleus','♞','Un chevalier au cœur noble et à l’armure étincelante. Il rêve de devenir une légende, et s’entraîne à prendre des poses héroïques devant les remparts.'],['Capitaine Azur','Chef de la garnison','🛡','Un stratège réputé qui a un plan pour chaque situation. Il lui arrive simplement d’oublier le plan au moment le plus important.'],['Frère Moustache','Chevalier errant','⚔','Le plus brave des chevaliers, selon lui-même. Sa moustache est célèbre dans trois duchés et redoutée par les barbiers.'],['Draeven — Le Ninja Bleu','Maître des techniques ninja','🥷','Draeven est un chevalier loyal et courageux, le seul de son ordre à maîtriser les techniques ninja. Il se déplace très vite, esquive les attaques et surprend ses ennemis. Il combat pour défendre ses amis et son royaume.']]},
@@ -45,6 +46,7 @@ ${animationUrl ? `
 <div class="idle-frame">
   <video
     class="character-video"
+    style="display:block;width:100%;height:100%;min-height:280px;object-fit:contain;border-radius:9px;background:#0b1220;"
     src="./draeven-le-ninja-bleu.mp4"
     autoplay
     loop
@@ -63,13 +65,8 @@ ${animationUrl ? `
   <p class="media-hint">Ta courte vidéo MP4 sera affichée ici automatiquement, en boucle et sans son.</p>
 </div>
 `}
-     <span class="idle-glyph">${c[2]}</span>
-     <div class="idle-label">ANIMATION EN BOUCLE</div>
-    </div>
-    <p class="media-hint">Ta courte vidéo MP4 sera affichée ici automatiquement, en boucle et sans son.</p>
    </div>
-  </div>
-  <div class="profile-copy">
+   <div class="profile-copy">
    <p class="role profile-role">${f.name} · ${c[1]}</p>
    <div class="lore-panel">
     <h2>Description</h2>
